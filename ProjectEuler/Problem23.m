@@ -5,10 +5,7 @@ A = zeros(1,bound);
 factors = [];
 derivates = [];
 total = 0;
-nonderivates = [];
-nonderivates2 = [];
-nonfiltered = [];
-filtered = [];
+
 
 clc;
 
@@ -22,9 +19,17 @@ for i=1:bound
     for j=1:sqrt(i)
        if mod(i,j)==0          
           if j == sqrt(i)
-              total = total + j;
-          else          
-              total = total + j + i/j;
+              if j ~= i
+                total = total + j;
+              end
+          else  
+              if j~= i 
+                total = total + j;
+              end
+              
+              if i/j ~= i
+                  total = total + i/j;
+              end
           end
        end
     end
@@ -51,14 +56,13 @@ end
 % Filter (remove dupes and zeros)
 derivates = unique(derivates);
 
-% Get sum
-total = 0;
+% Get relevant set (at the intersection starts getting inaccurate at high
+% indeces)
+nonderivates = setxor(1:max(derivates),derivates);
+nonderivates2 = nonderivates(find(nonderivates<=20161));
 
-for l=1:length(derivates)
-    if ~any(derivates==l)
-        total = total+i;
-    end
-end
+% Get sum
+total = sum(nonderivates2);
 
 % Print result
 fprintf('Sum of numbers not made up from the sum of 2 abundant numbers below %d: %d\n', bound, total);
